@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 
-import { Defeitos } from '../../shared/interfaces/defeitos.interface';
+import { AlteracoesEur } from '../../shared/interfaces/alteracoeseur.interface';
 import { Dente } from '../../shared/interfaces/dente.interface';
 import { Odontograma } from '../../shared/interfaces/odontograma.interface';
 
@@ -10,78 +10,54 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 @IonicPage()
 @Component({
   selector: 'page-about',
-  templateUrl: 'about.html',
-  animations: [
-    trigger('elementState', [
-      state('normal', style({transform: 'scale(1)'})),
-      state('aumentado125', style({transform: 'scale(1.25)'})),
-      state('aumentado150', style({transform: 'scale(1.5)'})),
-      state('aumentado200', style({transform: 'scale(2)'})),
-      transition('normal => aumentado125', animate('4000ms ease-in')),
-      transition('normal => aumentado150', animate('4000ms ease-in')),
-      transition('normal => aumentado200', animate('4000ms ease-in')),
-      transition('aumentado125 => normal', animate('4000ms ease-out')),
-      transition('aumentado150 => normal', animate('4000ms ease-out')),
-      transition('aumentado200 => normal', animate('4000ms ease-out'))
-    ])
-  ]
+  templateUrl: 'about.html'
 })
 export class AboutPage {
-
-  state = 'normal';
-  
-  selecionaDente(event) {
-    console.log('chegou');
-    let dente = event.target;
-    let bbox = dente.getBBox();
-    let minSize = Math.min(bbox.width, bbox.height);
-    this.state = (minSize < 15) ? ((minSize < 10) ? 'aumentado200' : 'aumentado150') : 'aumentado125';
-  }
 
   odontograma: Odontograma;
 
   dentes = [
-        {	numero: '102', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '103', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '104', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '105', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '106', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '107', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '108', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '109', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '110', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '201', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '202', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '203', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '204', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '205', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '206', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '207', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '208', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '209', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '210', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '301', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '302', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '303', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '304', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '305', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '306', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '307', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '308', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '309', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '310', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '311', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '401', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '402', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '403', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '404', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '405', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '406', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '407', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '408', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '409', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '410', desabilitado: false, defeitos: {} as Defeitos } as Dente,
-        {	numero: '411', desabilitado: false, defeitos: {} as Defeitos } as Dente
+        {	numero: '102', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '103', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '104', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '105', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '106', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '107', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '108', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '109', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '110', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '201', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '202', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '203', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '204', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '205', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '206', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '207', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '208', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '209', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '210', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '301', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '302', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '303', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '304', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '305', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '306', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '307', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '308', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '309', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '310', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '311', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '401', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '402', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '403', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '404', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '405', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '406', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '407', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '408', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '409', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '410', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente,
+        {	numero: '411', desabilitado: false, alteracoes: {} as AlteracoesEur } as Dente
   ];
 
   
