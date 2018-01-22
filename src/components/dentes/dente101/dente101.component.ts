@@ -38,10 +38,10 @@ export class Dente101Component {
         let minSize = Math.min(bbox.width, bbox.height);
         if (this.state === 'normal') {
             this.state = (minSize < 15) ? ((minSize < 10) ? 'aumentado200' : 'aumentado150') : 'aumentado125';
-            //this.denteService.denteSelecionado.emit('aumentado');
+            this.denteService.denteSelecionado.emit('aumentadoEsquerda');
         } else {
             this.state = 'normal';
-            //this.denteService.denteSelecionado.emit('normal');
+            this.denteService.denteSelecionado.emit('normal');
         }
         
     }

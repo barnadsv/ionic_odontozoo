@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 
 import { AlteracoesEur } from '../../shared/interfaces/alteracoeseur.interface';
@@ -12,7 +12,10 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
   selector: 'page-about',
   templateUrl: 'about.html'
 })
-export class AboutPage {
+export class AboutPage implements OnInit {
+
+  // centerX: string;
+  // centerY: string;
 
   odontograma: Odontograma;
 
@@ -104,6 +107,39 @@ export class AboutPage {
 
   constructor(public navCtrl: NavController) {
       
+  }
+
+  ngOnInit() {
+      // let content = document.getElementsByClassName("svg-content")[0];
+      // let bbC = content.getBoundingClientRect();
+      // let wC = bbC.width;
+      // let hC = bbC.height;
+      // let lC = bbC.left;
+      // let tC = bbC.top;
+
+      // let frente = document.getElementById("frente");
+      // let bbF = frente.getBoundingClientRect();
+      // let wF = bbF.width;
+      // let hF = bbF.height;
+      // let lF = bbF.left;
+      // let tF = bbF.top;
+
+      // let yScale = hC/hF;
+
+      // console.log(wC);
+      // console.log(hC);
+      // console.log(lC);
+      // console.log(wF);
+      // console.log(hF);
+      // console.log(lF);
+
+      // this.centerX = Math.floor((wC - wF)/2 - (lF - lC)).toString();
+      // this.centerY = Math.floor((hC - hF)/2 - (tF - tC + 50)).toString();
+
+      // frente.setAttribute("x", this.centerX);
+      // frente.setAttribute("y", this.centerY);
+      
+    
   }
 
 }
