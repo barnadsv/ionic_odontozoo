@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DenteService } from '../../../shared/services/dente.service';
@@ -22,6 +22,11 @@ import { DenteService } from '../../../shared/services/dente.service';
   ]
 })
 export class Dente101Component {
+
+    @ViewChild('innerFill') innerFill: ElementRef;
+    @ViewChild('innerBorder') innerBorder: ElementRef;
+    @ViewChild('outerFill') outerFill: ElementRef;
+    @ViewChild('outerBorder') outerBorder: ElementRef;
     
     constructor(private denteService: DenteService) {}
 
@@ -45,5 +50,6 @@ export class Dente101Component {
         }
         
     }
+    
 
 }
