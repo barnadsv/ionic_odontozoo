@@ -23,33 +23,37 @@ import { DenteService } from '../../../shared/services/dente.service';
 })
 export class Dente201Component {
 
+    denteSelecionado: string;
+
     @ViewChild('innerFill') innerFill: ElementRef;
     @ViewChild('innerBorder') innerBorder: ElementRef;
     @ViewChild('outerFill') outerFill: ElementRef;
     @ViewChild('outerBorder') outerBorder: ElementRef;
     
-    constructor(private denteService: DenteService) {}
-
-    ngOnInit() {
-        
+    constructor(private denteService: DenteService) {
+        this.denteSelecionado = '';
+        this.denteService.denteSelecionado.subscribe(acao => this.denteSelecionado = acao.estado === 'selecionado' ? acao.dente : '');
     }
+
+    ngOnInit() {}
 
     state = 'normal';
   
     selecionaDente(event) {
         
-        console.log('chegou');
-        let dente = event.target;
-        let bbox = dente.getBBox();
-        console.log(bbox.x);
-        let minSize = Math.min(bbox.width, bbox.height);
         if (this.state === 'normal') {
-            this.state = (minSize < 15) ? ((minSize < 10) ? 'aumentado200' : 'aumentado150') : 'aumentado125';
-            this.denteService.denteSelecionado.emit({estado: 'selecionado', posicao: 'direita'});
-
+            if (this.denteSelecionado === '') {
+                let dente = event.target;
+                let bbox = dente.getBBox();
+                let minSize = Math.min(bbox.width, bbox.height);
+                this.state = (minSize < 15) ? ((minSize < 10) ? 'aumentado200' : 'aumentado150') : 'aumentado125';
+                this.denteService.denteSelecionado.emit({dente: '201', estado: 'selecionado', posicao: 'direita'});
+            }
         } else {
-            this.state = 'normal';
-            this.denteService.denteSelecionado.emit({estado: 'nao-selecionado', posicao: 'direita'});
+            if (this.denteSelecionado === '201') { // Esta condicao deve acontecer sempre pra selecao unica
+                this.state = 'normal';
+                this.denteService.denteSelecionado.emit({dente: '201', estado: 'nao-selecionado', posicao: 'direita'});
+            }
         }
         
     }

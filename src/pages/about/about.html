@@ -6,16 +6,13 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+    
+    <app-frente-form [@slideInOut]="formState" class="frente-form"></app-frente-form>
   
-    
-    
-    <div #frenteFormContainer>
-        <app-frente-form></app-frente-form>
-    </div>
-    
     <svg class="svg-content" height="100%" width="100%" viewBox="0 0 200 513">
-        <svg app-frente id="frente" (onMedidas)="onMedidas($event)" />
+        <!-- <svg app-frente id="frente" (onMedidas)="onMedidas($event)" /> -->
+        <svg app-frente id="frente" />
     </svg>
     
   <!-- <svg [@elementState]="state" overflow="hidden" height="504" width="270"> -->

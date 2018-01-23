@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { TweenLite, TimelineLite } from 'gsap';
+//import { TweenLite, TimelineLite } from 'gsap';
 
 import { AlteracoesEur } from '../../shared/interfaces/alteracoeseur.interface';
 import { Dente } from '../../shared/interfaces/dente.interface';
 import { Odontograma } from '../../shared/interfaces/odontograma.interface';
+
+import { trigger, state, style, animate, transition, keyframes } from '@angular/animations';
 
 //import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DenteService } from '../../shared/services/dente.service';
@@ -12,24 +14,88 @@ import { DenteService } from '../../shared/services/dente.service';
 @IonicPage()
 @Component({
   selector: 'page-about',
-  templateUrl: 'about.html'
+  templateUrl: 'about.html',
+  animations: [
+    trigger('slideInOut', [
+      state('in-left', style({
+        transform: 'translate3d(0, 0, 0)'
+      })),
+      state('in-right', style({
+        transform: 'translate3d(35%, 0, 0)'
+      })),
+      state('out-left', style({
+        transform: 'translate3d(-100%, 0, 0)'
+      })),
+      state('out-right', style({
+        transform: 'translate3d(130%, 0, 0)'
+      })),
+      transition('in-left => out-left', animate('1000ms linear')),
+      transition('out-left => in-left', animate('1000ms linear')),
+      transition('in-right => out-right', animate('1000ms linear')),
+      transition('out-right => in-right', animate('1000ms linear')),
+
+      transition('out-right => in-left', animate('1000ms linear',
+        keyframes([
+          style({transform: 'translate3d(130%, 200%, 0)', offset: 0}),
+          style({transform: 'translate3d(-100%, 200%, 0)', offset: 0.01}),
+          style({transform: 'translate3d(-100%, 0, 0)', offset: 0.02}),
+          style({transform: 'translate3d(0, 0, 0)', offset: 1})
+        ])
+      )),
+      transition('out-left => in-right', animate('1000ms linear',
+        keyframes([
+          style({transform: 'translate3d(-100%, 200%, 0)', offset: 0}),
+          style({transform: 'translate3d(130%, 200%, 0)', offset: 0.01}),
+          style({transform: 'translate3d(130%, 0, 0)', offset: 0.02}),
+          style({transform: 'translate3d(35%, 0, 0)', offset: 1})
+        ])
+      ))
+    ]),
+  ]
 })
 export class AboutPage implements OnInit {
 
+    formState: string;
     // centerX: string;
     // centerY: string;
 
-    @ViewChild("frenteFormContainer") frenteFormContainer: ElementRef;
+    // @ViewChild("frenteFormContainer") frenteFormContainer: ElementRef;
     centerX: string;
     centerY: string;
 
     scaledHeight: number;
     scaledWidth: number;
 
-    contentHeight: number;
-    contentWidth: number;
+    containerHeight: number;
+    containerWidth: number;
 
-  
+    constructor(public navCtrl: NavController, private denteService: DenteService) {
+        this.denteService.denteSelecionado.subscribe(acao => this.toggleForm(acao));
+        this.formState = 'out-left';
+    }
+
+    ngOnInit() {
+      // this.frenteFormContainer.nativeElement.style.transform = "matrix(1, 0, 0, 1, -10000, 10000)";
+      // this.frenteFormContainer.nativeElement.style.opacity = "0";
+  }
+
+    toggleForm(acao) {
+        if (acao.estado === 'selecionado') {
+            if (acao.posicao === 'direita') {
+                this.formState = 'in-right';
+            } 
+            if (acao.posicao === 'esquerda') {
+                this.formState = 'in-left';
+            }
+        } else {
+            if (acao.posicao === 'direita') {
+                this.formState = 'out-right';
+            }
+            if (acao.posicao === 'esquerda') {
+                this.formState = 'out-left';
+            }
+        }
+    }
     
     odontograma: Odontograma;
 
@@ -119,87 +185,32 @@ export class AboutPage implements OnInit {
     };
     
 
-    constructor(public navCtrl: NavController, private denteService: DenteService) {
-        this.denteService.denteSelecionado.subscribe(acao => this.alteraLargura(acao));
-    }
+    
 
-    alteraLargura(acao) {
-        let novoX = 0;
-        if (acao.estado === 'selecionado') {
-            //TweenLite.to(this.formCol, 0.1, {width: "0" })
-            console.log("selecionado")
-            novoX = acao.posicao === 'esquerda' ? 0 : this.scaledWidth/2;
-            new TimelineLite().to(this.frenteFormContainer.nativeElement, 0.1, {x: novoX})
-                              .to(this.frenteFormContainer.nativeElement, 1, {y: 0, autoAlpha: 1});
-                              
-            // TweenLite.to(this.frenteFormContainer.nativeElement, 0.1, {x: novoX});
-            // TweenLite.to(this.frenteFormContainer.nativeElement, 1, {y: 0, delay: 1});
-        } else {
-            //TweenLite.to(this.formCol, 0.1, {width: (this.ionRowWidth * 0.8).toString() });
-            //this.navCtrl.push("FrenteFormPage");
-            console.log("nao-selecionado");
-            new TimelineLite().to(this.frenteFormContainer.nativeElement, 1, {y: this.contentHeight, autoAlpha: 0})
-                              .to(this.frenteFormContainer.nativeElement, 0.1, {x: 0});
-                              
-            // TweenLite.to(this.frenteFormContainer.nativeElement, 1, {y: this.contentHeight});
-            // TweenLite.to(this.frenteFormContainer.nativeElement, 0.1, {x: 0, delay: 1});
-        }
-    }
+    // alteraLargura(acao) {
+    //     let novoX = 0;
+    //     if (acao.estado === 'selecionado') {
+    //         novoX = acao.posicao === 'esquerda' ? 0 : this.scaledWidth/2;
+    //         new TimelineLite().to(this.frenteFormContainer.nativeElement, 0.1, {x: novoX})
+    //                           .to(this.frenteFormContainer.nativeElement, 1, {y: 0, autoAlpha: 1});
+    //     } else {
+    //         new TimelineLite().to(this.frenteFormContainer.nativeElement, 1, {y: this.containerHeight, autoAlpha: 0})
+    //                           .to(this.frenteFormContainer.nativeElement, 0.1, {x: 0});
+    //     }
+    // }
 
-    ngOnInit() {
-        //TweenLite.to(this.frenteFormContainer.nativeElement, 0.1, {x: "0", y: "10000px"});
-        // this.frenteFormContainer.nativeElement.setAttribute("x", "-10000");
-        // this.frenteFormContainer.nativeElement.setAttribute("y", "10000");
-        
-        this.frenteFormContainer.nativeElement.style.transform = "matrix(1, 0, 0, 1, -10000, 10000)";
-        
-        
-        
-        //TweenLite.to(this.formCol.nativeElement, 0.1, {width:"0"})
-        // let bbox = this.ionRow.nativeElement.getBoundingClientRect();
-        // this.ionRowWidth = bbox.width;
-        // let content = document.getElementsByClassName("svg-content")[0];
-        // let bbC = content.getBoundingClientRect();
-        // let wC = bbC.width;
-        // let hC = bbC.height;
-        // let lC = bbC.left;
-        // let tC = bbC.top;
+    
 
-        // let frente = document.getElementById("frente");
-        // let bbF = frente.getBoundingClientRect();
-        // let wF = bbF.width;
-        // let hF = bbF.height;
-        // let lF = bbF.left;
-        // let tF = bbF.top;
-
-        // let yScale = hC/hF;
-
-        // console.log(wC);
-        // console.log(hC);
-        // console.log(lC);
-        // console.log(wF);
-        // console.log(hF);
-        // console.log(lF);
-
-        // this.centerX = Math.floor((wC - wF)/2 - (lF - lC)).toString();
-        // this.centerY = Math.floor((hC - hF)/2 - (tF - tC + 50)).toString();
-
-        // frente.setAttribute("x", this.centerX);
-        // frente.setAttribute("y", this.centerY);
-        
-      
-    }
-
-    onMedidas(medidas) {
-        this.centerX = medidas.centerX;
-        this.centerY = medidas.centerY;
-        this.scaledHeight = medidas.scaledHeight;
-        this.scaledWidth = medidas.scaledWidth;
-        this.contentHeight = medidas.contentHeight;
-        this.contentWidth = medidas.contentWidth;
-        if (typeof this.contentHeight !== 'undefined') {
-          TweenLite.to(this.frenteFormContainer.nativeElement, 1, {x: 0, y: this.contentHeight});
-        }
-    }
+    // onMedidas(medidas) {
+    //     // this.centerX = medidas.centerX;
+    //     // this.centerY = medidas.centerY;
+    //     // this.scaledHeight = medidas.scaledHeight;
+    //     // this.scaledWidth = medidas.scaledWidth;
+    //     // this.containerHeight = medidas.containerHeight;
+    //     // this.containerWidth = medidas.containerWidth;
+    //     // if (typeof this.containerHeight !== 'undefined') {
+    //     //   TweenLite.to(this.frenteFormContainer.nativeElement, 1, {x: 0, y: this.containerHeight});
+    //     // }
+    // }
 
 }

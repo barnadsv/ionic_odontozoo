@@ -3,9 +3,9 @@ import { Injectable, EventEmitter } from '@angular/core';
 @Injectable()
 export class DenteService {
 
-    denteSelecionado: EventEmitter<{estado: string, posicao: string}>;
+    denteSelecionado: EventEmitter<{dente: string, estado: string, posicao: string}>;
 
     constructor() {
-        this.denteSelecionado = new EventEmitter<{estado: string, posicao: string}>();
+        this.denteSelecionado = new EventEmitter<{dente: string, estado: string, posicao: string}>();
     }
 }
