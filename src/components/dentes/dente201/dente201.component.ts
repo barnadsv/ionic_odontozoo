@@ -4,8 +4,8 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { DenteService } from '../../../shared/services/dente.service';
 
 @Component({
-  selector: '[app-dente101]',
-  templateUrl: './dente101.component.html',
+  selector: '[app-dente201]',
+  templateUrl: './dente201.component.html',
   animations: [
     trigger('elementState', [
       state('normal', style({transform: 'scale(1)', 'transform-origin': 'center'})),
@@ -21,7 +21,7 @@ import { DenteService } from '../../../shared/services/dente.service';
     ])
   ]
 })
-export class Dente101Component {
+export class Dente201Component {
 
     @ViewChild('innerFill') innerFill: ElementRef;
     @ViewChild('innerBorder') innerBorder: ElementRef;
@@ -38,18 +38,18 @@ export class Dente101Component {
   
     selecionaDente(event) {
         
-        // console.log('chegou');
+        console.log('chegou');
         let dente = event.target;
         let bbox = dente.getBBox();
-        // console.log(bbox.x);
+        console.log(bbox.x);
         let minSize = Math.min(bbox.width, bbox.height);
         if (this.state === 'normal') {
             this.state = (minSize < 15) ? ((minSize < 10) ? 'aumentado200' : 'aumentado150') : 'aumentado125';
-            this.denteService.denteSelecionado.emit({estado: 'selecionado', posicao: 'esquerda'});
+            this.denteService.denteSelecionado.emit({estado: 'selecionado', posicao: 'direita'});
 
         } else {
             this.state = 'normal';
-            this.denteService.denteSelecionado.emit({estado: 'nao-selecionado', posicao: 'esquerda'});
+            this.denteService.denteSelecionado.emit({estado: 'nao-selecionado', posicao: 'direita'});
         }
         
     }

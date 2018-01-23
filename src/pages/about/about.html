@@ -7,8 +7,15 @@
 </ion-header>
 
 <ion-content padding>
-    <svg class="svg-content">
-        <svg app-frente id="frente"/>
+  
+    
+    
+    <div #frenteFormContainer>
+        <app-frente-form></app-frente-form>
+    </div>
+    
+    <svg class="svg-content" height="100%" width="100%" viewBox="0 0 200 513">
+        <svg app-frente id="frente" (onMedidas)="onMedidas($event)" />
     </svg>
     
   <!-- <svg [@elementState]="state" overflow="hidden" height="504" width="270"> -->

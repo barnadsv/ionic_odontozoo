@@ -2,8 +2,10 @@ import { NgModule } from '@angular/core';
 import { IonicModule } from 'ionic-angular';
 
 import { FrenteComponent } from './frente/frente.component';
+import { FrenteFormComponent } from './frente-form/frente-form.component';
 //import { DentesComponentsModule } from './dentes/dentes.components.module';
 import { Dente101Component } from './dentes/dente101/dente101.component';
+import { Dente201Component } from './dentes/dente201/dente201.component';
 // import { RegistroFormComponent } from './registro-form/registro-form.component';
 // import { ContatoItemComponent } from './contatos/contato-list/contato-item/contato-item.component';
 // import { ContatoListComponent } from './contatos/contato-list/contato-list.component';
@@ -19,7 +21,9 @@ import { Dente101Component } from './dentes/dente101/dente101.component';
 @NgModule({
     declarations: [
         FrenteComponent,
-        Dente101Component
+        FrenteFormComponent,
+        Dente101Component,
+        Dente201Component
         // RegistroFormComponent,
         // ContatoItemComponent,
         // ContatoListComponent,
@@ -37,7 +41,9 @@ import { Dente101Component } from './dentes/dente101/dente101.component';
     ],
     exports: [
         FrenteComponent,
-        Dente101Component
+        FrenteFormComponent,
+        Dente101Component,
+        Dente201Component
         // RegistroFormComponent,
         // ContatoItemComponent,
         // ContatoListComponent,
