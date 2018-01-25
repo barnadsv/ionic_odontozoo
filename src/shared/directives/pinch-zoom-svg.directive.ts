@@ -33,15 +33,21 @@ export class PinchZoomSvgDirective {
         let bC = this.svgElement.getBoundingClientRect();
         this.smwidth = bC.width;
         this.smheight = bC.height;
+        console.log("smwidth: " + this.smwidth);
+        console.log("smheight: " + this.smheight);
         // this.smwidth = this.svgElement.getAttribute('viewBox').split(' ')[2];
 		// this.smheight = this.svgElement.getAttribute('viewBox').split(' ')[3];
     }
 
     @HostListener('touchstart', ['$event']) onTouchStart(evt) {
         this.startX = evt.touches[0].pageX;
+        console.log("startX: " + this.startX);
         this.startY = evt.touches[0].pageY;
+        console.log("startY: " + this.startY);
         this.initialPositionX = this.positionX;
+        console.log("initialPositionX: " + this.initialPositionX);
         this.initialPositionY = this.positionY;
+        console.log("initialPositionY: " + this.initialPositionY);
         this.moveX = 0;
         this.moveY = 0;
         this.mode = '';
@@ -58,9 +64,11 @@ export class PinchZoomSvgDirective {
             this.originX = evt.touches[0].pageX -
                 Math.round((evt.touches[0].pageX - evt.touches[1].pageX) / 2) -
                 this.svgElement[0].offsetLeft - this.initialPositionX;
+            console.log("start originX: " + this.originX);
             this.originY = evt.touches[0].pageY -
                 Math.round((evt.touches[0].pageY - evt.touches[1].pageY) / 2) -
                 this.svgElement[0].offsetTop - this.initialPositionY;
+            console.log("start originY: " + this.originY);
         } 
     }
 
@@ -71,28 +79,41 @@ export class PinchZoomSvgDirective {
         if (this.mode === 'swipe' && this.scale > 1) {
 
             this.moveX = evt.touches[0].pageX - this.startX;
+            console.log("swipe moveX: " + this.moveX);
             this.moveY = evt.touches[0].pageY - this.startY;
+            console.log("swipe moveY: " + this.moveY);
 
             this.positionX = this.initialPositionX + this.moveX;
+            console.log("swipe positionX: " + this.positionX);
             this.positionY = this.initialPositionY + this.moveY;
+            console.log("swipe positionY: " + this.positionY);
 
         } else if (this.mode === 'pinch') {
 
             this.distance = this.getDistance(evt);
+            console.log("pinch distance: " + this.distance);
             this.relativeScale = this.distance / this.initialDistance;
+            console.log("pinch relativeScale: " + this.relativeScale);
             this.scale = this.relativeScale * this.initialScale;
+            console.log("pinch scale: " + this.scale);
             this.positionX = -((evt.touches[0].pageX + evt.touches[1].pageX) / 2);
+            console.log("pinch positionX: " + this.positionX);
             this.positionY = -((evt.touches[0].pageY + evt.touches[1].pageY) / 2);
+            console.log("pinch positionY: " + this.positionY);
             // Take scale into account, so there is no left-up offset when zoomed in:
             this.positionX = this.positionX * this.scale;
+            console.log("pinch scaledPositionX: " + this.positionX);
             this.positionY = this.positionY * this.scale;
+            console.log("pinch scaledPositionY: " + this.positionY);
 
         } else {
 
             if (evt.touches.length === 1) {
                 this.mode = 'swipe';
+                console.log("mode swipe");
             } else if (evt.touches.length === 2) {
                 this.mode = 'pinch';
+                console.log("mode pinch");
             }
 
         }
@@ -145,6 +166,9 @@ export class PinchZoomSvgDirective {
    
     transformSVG(duration) {
         //let transition = duration !== 0 ? 'all cubic-bezier(0,0,.5,1) ' + duration + 's' : '';
+        console.log("transform positionX: " + this.positionX);
+        console.log("transform positionY: " + this.positionY);
+        console.log("transform scale: " + this.scale);
         let matrixArray = [this.scale, 0, 0, this.scale, this.positionX, this.positionY];
         let matrix = 'matrix(' + matrixArray.join(',') + ')';
         console.log(matrix);
