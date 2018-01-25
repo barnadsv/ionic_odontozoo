@@ -32,7 +32,7 @@ export class Dente201Component {
     
     constructor(private denteService: DenteService) {
         this.denteSelecionado = '';
-        this.denteService.denteSelecionado.subscribe(acao => this.denteSelecionado = acao.estado === 'selecionado' ? acao.dente : '');
+        this.denteService.selecionouDente.subscribe(acao => this.denteSelecionado = acao.estado === 'selecionado' ? acao.dente : '');
     }
 
     ngOnInit() {}
@@ -47,12 +47,12 @@ export class Dente201Component {
                 let bbox = dente.getBBox();
                 let minSize = Math.min(bbox.width, bbox.height);
                 this.state = (minSize < 15) ? ((minSize < 10) ? 'aumentado200' : 'aumentado150') : 'aumentado125';
-                this.denteService.denteSelecionado.emit({dente: '201', estado: 'selecionado', posicao: 'direita'});
+                this.denteService.selecionouDente.emit({dente: '201', estado: 'selecionado', posicao: 'direita'});
             }
         } else {
             if (this.denteSelecionado === '201') { // Esta condicao deve acontecer sempre pra selecao unica
                 this.state = 'normal';
-                this.denteService.denteSelecionado.emit({dente: '201', estado: 'nao-selecionado', posicao: 'direita'});
+                this.denteService.selecionouDente.emit({dente: '201', estado: 'nao-selecionado', posicao: 'direita'});
             }
         }
         

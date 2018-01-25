@@ -5,6 +5,8 @@ import { MyApp } from './app.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+// import { PinchZoomSvgDirective } from '../shared/directives/pinch-zoom-svg.directive';
+
 //import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
@@ -19,6 +21,7 @@ import { DenteService } from '../shared/services/dente.service';
 @NgModule({
   declarations: [
     MyApp,
+    // PinchZoomSvgDirective,
     //AboutPage,
     ContactPage,
     HomePage,

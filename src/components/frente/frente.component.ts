@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 
 //import { trigger, state, style, animate, transition } from '@angular/animations';
 import { DenteService } from '../../shared/services/dente.service';
@@ -10,92 +10,97 @@ import { TweenLite } from 'gsap';
 })
 export class FrenteComponent {
 
-    // @ViewChild('frente') _frente: ElementRef;
-    // @Output() onMedidas = new EventEmitter<{centerX: string, centerY: string, scaledHeight: number, scaledWidth: number, containerHeight: number, containerWidth: number}>();
+    @ViewChild('frente') frente: ElementRef;
+    @Output() onMedidas = new EventEmitter<{x: number, y: number, left: number, scaledHeight: number, scaledWidth: number, containerHeight: number, containerWidth: number}>();
 
-    // centerX: string;
-    // centerY: string;
+    x: number;
+    y: number;
+    left: number;
 
-    // scale: number;
-    // scaledHeight: number;
-    // scaledWidth: number;
+    scale: number;
+    scaledHeight: number;
+    scaledWidth: number;
 
-    // containerHeight: number;
+    containerHeight: number;
     containerWidth: number;
 
-    frente: HTMLElement;
-    // frenteHeight: number;
+    // frente: HTMLElement;
+    frenteHeight: number;
     frenteWidth: number;
 
-    // frenteElement: any;
+    frenteElement: any;
     
-    constructor(private denteService: DenteService) {}
+    constructor(private denteService: DenteService) {
+        this.denteService.selecionouDente.subscribe((acao) => this.alteraLocalizacao(acao));
+    }
 
     ngOnInit() {
-
-        this.centralizaImagem();
-
-        this.denteService.denteSelecionado.subscribe((acao) => this.alteraLocalizacao(acao));
+        this.centralizaImagem();      
     }
 
     centralizaImagem() {
-        let container = document.getElementsByClassName("svg-content")[0];
-        let bcrC = container.getBoundingClientRect();
-        // let wC = bcrC.width;
+        let containerElement = document.getElementsByClassName("svg-content")[0];
+        let bcrC = containerElement.getBoundingClientRect();
         this.containerWidth = bcrC.width;
-        // let hC = bcrC.height;
-        // this.containerHeight = bcrC.height;
-        // let lC = bcrC.left;
-        // let tC = bcrC.top;
-
-        this.frente = document.getElementById("frente");
-        // this.frenteElement = this._frente.nativeElement;
-        let bcrF = this.frente.getBoundingClientRect();
-        // let wF = bcrF.width;
-        this.frenteWidth = bcrF.width;
-        // let hF = bcrF.height;
-        // this.frenteHeight = bcrF.height;
-        // let lF = bcrF.left;
-        // let tF = bcrF.top;
-
-        // this.scaledWidth = hC/hF * wF;
+        this.containerHeight = bcrC.height - 60; // 56 eh a altura da barra inferior com os tabs -- Acho que eh por isso, pois os valores coincidem!
+        let bbC = containerElement.getBBox();
+        this.left = bbC.x;
         
-        // let rawScale = hC/hF;
-        // let rawFator = rawScale / 0.1;
-        // let fator = Math.floor(rawFator);
-        // this.scale = fator * 0.1;
+        this.frenteElement = this.frente.nativeElement;
+        let bbF = (this.frenteElement as SVGLocatable).getBBox();
+        console.log(bbF);
+        this.frenteWidth = bbF.width;
+        this.frenteHeight = bbF.height;
 
-        // this.scaledHeight = hF * this.scale;
-        
-        // console.log("container");
-        // console.log(wC);
-        // console.log(hC);
+        this.scale = this.containerHeight/this.frenteHeight;
+        this.scaledWidth = this.scale * this.frenteWidth;
+        this.scaledHeight = this.scale * this.frenteHeight;
+
+        this.x = this.containerWidth/2 - this.scaledWidth/2 - this.left; 
+
+        TweenLite.to(this.frenteElement, 0.1, { scale: this.scale, x: this.x });
+
+        console.log("container");
+        console.log((containerElement as SVGLocatable).getBBox());
+        console.log(bcrC);
+        console.log(this.containerWidth);
+        console.log(this.containerHeight);
         // console.log(lC);
         // console.log(tC);
-        // console.log("frente");
-        // console.log(wF);
-        // console.log(hF);
+        console.log(this.left);
+        // console.log(yC);
+        console.log("frente");
+        console.log((this.frenteElement as SVGLocatable).getBBox());
+        console.log(this.frenteElement.getBoundingClientRect());
+        console.log(this.frenteWidth);
+        console.log(this.frenteHeight);
         // console.log(lF);
         // console.log(tF);
+        // console.log(xF);
+        // console.log(yF);
+        // console.log("_frente");
+        // console.log(_bbF);
+        // console.log(this.frenteElement.getBoundingClientRect());
         
-        // console.log("frente scaled");
-        // console.log(this.scale);
-        // console.log(this.scaledWidth);
-        // console.log(this.scaledHeight);
+        console.log("frente scaled");
+        console.log(this.scale);
+        console.log(this.scaledWidth);
+        console.log(this.scaledHeight);
 
         // this.centerX = lF.toString();
         // this.centerY = tF.toString();
 
-        // this.onMedidas.emit(
-        //     {
-        //         centerX: this.centerX, 
-        //         centerY: this.centerY, 
-        //         scaledHeight: this.scaledHeight, 
-        //         scaledWidth: this.scaledWidth, 
-        //         containerHeight: this.containerHeight, 
-        //         containerWidth: this.containerWidth
-        //     }
-        // );
+        this.onMedidas.emit(
+            {
+                x: this.x, 
+                y: this.y, 
+                left: this.left,
+                scaledHeight: this.scaledHeight, 
+                scaledWidth: this.scaledWidth, 
+                containerHeight: this.containerHeight, 
+                containerWidth: this.containerWidth
+            }
+        );
 
         
     }
@@ -103,16 +108,18 @@ export class FrenteComponent {
     alteraLocalizacao(acao) {
 
         if (acao.estado === 'nao-selecionado') {
-            TweenLite.to(this.frente, 1, {attr: {x: 0}});
+            TweenLite.to(this.frenteElement, 1, {x: this.x});
         } else {
             // let novaPosicao = acao.posicao === 'direita' ? 
             //     (-1 * (this.containerWidth / this.frenteWidth * 100 * 1.045) - 5).toString() :
             //      (this.containerWidth / this.frenteWidth * 100 * 1.045).toString();
             let novaPosicao = acao.posicao === 'direita' ? 
-                 (-1 * (this.containerWidth / this.frenteWidth * 100) - 5).toString() :
-                  (this.containerWidth / this.frenteWidth * 100).toString();
-            TweenLite.to(this.frente, 1, {attr: {x: parseInt(novaPosicao)}});
+                 -1 * (this.scaledWidth/2 + this.left) + 5 :
+                  this.containerWidth - this.scaledWidth/2 - this.left - 5;
+            TweenLite.to(this.frenteElement, 1, {x: novaPosicao});
         }
     }
+
+    
 
 }

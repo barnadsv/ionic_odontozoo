@@ -60,8 +60,9 @@ export class AboutPage implements OnInit {
     // centerY: string;
 
     // @ViewChild("frenteFormContainer") frenteFormContainer: ElementRef;
-    centerX: string;
-    centerY: string;
+    x: number;
+    y: number;
+    left: number;
 
     scaledHeight: number;
     scaledWidth: number;
@@ -70,7 +71,7 @@ export class AboutPage implements OnInit {
     containerWidth: number;
 
     constructor(public navCtrl: NavController, private denteService: DenteService) {
-        this.denteService.denteSelecionado.subscribe(acao => this.toggleForm(acao));
+        this.denteService.selecionouDente.subscribe(acao => this.toggleForm(acao));
         this.formState = 'out-left';
     }
 
@@ -201,16 +202,17 @@ export class AboutPage implements OnInit {
 
     
 
-    // onMedidas(medidas) {
-    //     // this.centerX = medidas.centerX;
-    //     // this.centerY = medidas.centerY;
-    //     // this.scaledHeight = medidas.scaledHeight;
-    //     // this.scaledWidth = medidas.scaledWidth;
-    //     // this.containerHeight = medidas.containerHeight;
-    //     // this.containerWidth = medidas.containerWidth;
-    //     // if (typeof this.containerHeight !== 'undefined') {
-    //     //   TweenLite.to(this.frenteFormContainer.nativeElement, 1, {x: 0, y: this.containerHeight});
-    //     // }
-    // }
+    onMedidas(medidas) {
+        this.x = medidas.x;
+        this.y = medidas.y;
+        this.left = medidas.left;
+        this.scaledHeight = medidas.scaledHeight;
+        this.scaledWidth = medidas.scaledWidth;
+        this.containerHeight = medidas.containerHeight;
+        this.containerWidth = medidas.containerWidth;
+        // if (typeof this.containerHeight !== 'undefined') {
+        //   TweenLite.to(this.frenteFormContainer.nativeElement, 1, {x: 0, y: this.containerHeight});
+        // }
+    }
 
 }
