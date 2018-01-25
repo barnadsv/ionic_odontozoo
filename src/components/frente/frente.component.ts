@@ -43,7 +43,7 @@ export class FrenteComponent {
         let bcrC = containerElement.getBoundingClientRect();
         this.containerWidth = bcrC.width;
         this.containerHeight = bcrC.height - 60; // 56 eh a altura da barra inferior com os tabs -- Acho que eh por isso, pois os valores coincidem!
-        let bbC = containerElement.getBBox();
+        let bbC = (containerElement as SVGLocatable).getBBox();
         this.left = bbC.x;
         
         this.frenteElement = this.frente.nativeElement;
