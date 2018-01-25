@@ -152,7 +152,8 @@ export class PinchZoomSvgDirective {
         //$('#viewport').attr('transform', matrix);
         let childSvg = this.svgElement.children[0];
         let childG = childSvg.children[0];
-        childG.setAttribute('transform', matrix);
+        //childG.setAttribute('transform', matrix);
+
         //document.getElementById('viewport').setAttribute('transform', matrix);
     }
     

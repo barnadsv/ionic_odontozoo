@@ -43,11 +43,11 @@ export class FrenteComponent {
         let bcrC = containerElement.getBoundingClientRect();
         this.containerWidth = bcrC.width;
         this.containerHeight = bcrC.height - 60; // 56 eh a altura da barra inferior com os tabs -- Acho que eh por isso, pois os valores coincidem!
-        let bbC = (containerElement as SVGLocatable).getBBox();
+        let bbC = (containerElement as SVGGraphicsElement).getBBox();
         this.left = bbC.x;
         
         this.frenteElement = this.frente.nativeElement;
-        let bbF = (this.frenteElement as SVGLocatable).getBBox();
+        let bbF = (this.frenteElement as SVGGraphicsElement).getBBox();
         console.log(bbF);
         this.frenteWidth = bbF.width;
         this.frenteHeight = bbF.height;
@@ -61,7 +61,7 @@ export class FrenteComponent {
         TweenLite.to(this.frenteElement, 0.1, { scale: this.scale, x: this.x });
 
         console.log("container");
-        console.log((containerElement as SVGLocatable).getBBox());
+        console.log((containerElement as SVGGraphicsElement).getBBox());
         console.log(bcrC);
         console.log(this.containerWidth);
         console.log(this.containerHeight);
@@ -70,7 +70,7 @@ export class FrenteComponent {
         console.log(this.left);
         // console.log(yC);
         console.log("frente");
-        console.log((this.frenteElement as SVGLocatable).getBBox());
+        console.log((this.frenteElement as SVGGraphicsElement).getBBox());
         console.log(this.frenteElement.getBoundingClientRect());
         console.log(this.frenteWidth);
         console.log(this.frenteHeight);
