@@ -1,4 +1,8 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
+import { TweenLite } from 'gsap';
+
+import { DenteService } from '../services/dente.service';
+
 
 @Directive({
     selector: '[pinchZoomSvg]'
@@ -21,16 +25,48 @@ export class PinchZoomSvgDirective {
     scale = 1;
     relativeScale = 1;
     initialScale = 1;
+    MIN_SCALE = 1;
     MAX_SCALE = 3;
     mode = '';
     distance = 0;
     initialDistance = 0;
     svgElement;
 
-    constructor(elRef: ElementRef) {
+    left;
+    scaledHeight;
+    scaledWidth;
+    offset;
+    originalHeight;
+    originalWidth;
+    minX;
+    maxX;
+    minY;
+    maxY;
+    zoomVelocity = 0.3;
+
+    constructor(elRef: ElementRef, private denteService: DenteService) {
+        let self = this;
+        this.denteService.capturouMedidas.subscribe(medidas => {
+            self.initialPositionX = medidas.x;
+            self.initialPositionY = medidas.y;
+            self.positionX = medidas.x;
+            self.positionY = medidas.y;
+            self.left = medidas.left;
+            self.initialScale = medidas.scale;
+            self.scale = medidas.scale;
+            self.scaledHeight = medidas.scaledHeight;
+            self.scaledWidth = medidas.scaledWidth;
+            self.smheight = medidas.containerHeight;
+            self.smwidth = medidas.containerWidth;
+            self.originalHeight = medidas.scaledHeight / medidas.scale;
+            self.originalWidth = medidas.scaledWidth / medidas.scale;
+        })
+    
         console.log(elRef);
         this.svgElement = elRef.nativeElement;
+        console.log(this.svgElement);
         let bC = this.svgElement.getBoundingClientRect();
+        console.log(bC);
         this.smwidth = bC.width;
         this.smheight = bC.height;
         console.log("smwidth: " + this.smwidth);
@@ -40,6 +76,8 @@ export class PinchZoomSvgDirective {
     }
 
     @HostListener('touchstart', ['$event']) onTouchStart(evt) {
+
+        console.log("touchstart event.targe: " + evt.target);
         this.startX = evt.touches[0].pageX;
         console.log("startX: " + this.startX);
         this.startY = evt.touches[0].pageY;
@@ -53,30 +91,37 @@ export class PinchZoomSvgDirective {
         this.mode = '';
 
         if (evt.touches.length === 2) {
-            this.initialScale = this.scale;
-            this.initialDistance = this.getDistance(evt);
             // this.originX = evt.touches[0].pageX -
             //     parseInt((evt.touches[0].pageX - evt.touches[1].pageX) / 2, 10) -
             //     this.svgElement[0].offsetLeft - this.initialPositionX;
             // this.originY = evt.touches[0].pageY -
             //     parseInt((evt.touches[0].pageY - evt.touches[1].pageY) / 2, 10) -
             //     this.svgElement[0].offsetTop - this.initialPositionY;
+            this.offset = this.getElementOffset(this.svgElement.children[0]);
             this.originX = evt.touches[0].pageX -
                 Math.round((evt.touches[0].pageX - evt.touches[1].pageX) / 2) -
-                this.svgElement[0].offsetLeft - this.initialPositionX;
+                this.offset.left - this.initialPositionX;
+            console.log(evt.touches[0].pageX);
+            console.log(evt.touches[1].pageX);
+            console.log(this.offset.left);
             console.log("start originX: " + this.originX);
             this.originY = evt.touches[0].pageY -
                 Math.round((evt.touches[0].pageY - evt.touches[1].pageY) / 2) -
-                this.svgElement[0].offsetTop - this.initialPositionY;
+                this.offset.top - this.initialPositionY;
+            console.log(evt.touches[0].pageY);
+            console.log(evt.touches[1].pageY);
+            console.log(this.offset.top);
             console.log("start originY: " + this.originY);
         } 
     }
 
     @HostListener('touchmove', ['$event']) onTouchMove(evt) {
-        evt.preventDefault();
+        console.log("touchmove event.targe: " + evt.target);
+        
+        //evt.preventDefault();
         //evt = evt.originalEvent;//maybe??
 
-        if (this.mode === 'swipe' && this.scale > 1) {
+        if (this.mode === 'swipe' && this.scale >= this.MIN_SCALE && this.scale <= this.MAX_SCALE) {
 
             this.moveX = evt.touches[0].pageX - this.startX;
             console.log("swipe moveX: " + this.moveX);
@@ -90,22 +135,47 @@ export class PinchZoomSvgDirective {
 
         } else if (this.mode === 'pinch') {
 
-            this.distance = this.getDistance(evt);
+            if (this.initialDistance === 0) {
+                this.initialDistance = this.getDistance(evt);
+                this.distance = this.initialDistance;
+            } else {
+                this.distance = this.getDistance(evt);
+            }
             console.log("pinch distance: " + this.distance);
-            this.relativeScale = this.distance / this.initialDistance;
+            this.relativeScale = this.zoomVelocity * this.distance / this.initialDistance;
             console.log("pinch relativeScale: " + this.relativeScale);
+            console.log("pinch initialScale: " + this.initialScale);
             this.scale = this.relativeScale * this.initialScale;
+            this.scale = this.scale < this.MIN_SCALE ? this.MIN_SCALE : this.scale > this.MAX_SCALE ? this.MAX_SCALE : this.scale;
             console.log("pinch scale: " + this.scale);
-            this.positionX = -((evt.touches[0].pageX + evt.touches[1].pageX) / 2);
-            console.log("pinch positionX: " + this.positionX);
-            this.positionY = -((evt.touches[0].pageY + evt.touches[1].pageY) / 2);
-            console.log("pinch positionY: " + this.positionY);
+            this.scaledWidth = this.originalWidth * this.scale;
+            this.scaledHeight = this.originalHeight * this.scale;
+            // if (evt.touches.length === 2) {
+                
+            //     this.scale = 
+            //     this.positionX = ((evt.touches[0].pageX + evt.touches[1].pageX) / 2);
+            //     this.positionX = this.positionX
+            //     console.log("pinch positionX: " + this.positionX);
+            //     this.positionY = ((evt.touches[0].pageY + evt.touches[1].pageY) / 2);
+            //     console.log("pinch positionY: " + this.positionY);
+            // }
             // Take scale into account, so there is no left-up offset when zoomed in:
-            this.positionX = this.positionX * this.scale;
+            if (this.scale >= this.MIN_SCALE && this.scale <= this.MAX_SCALE) {
+                if (this.scale > this.initialScale) {
+                    this.positionX = this.positionX - (this.positionX / this.scale); //this.positionX * (1 - 1/this.scale)
+                    this.positionY = this.positionY - (this.positionY / this.scale);
+                } else {
+                    this.positionX = this.positionX / this.scale;
+                    this.positionY = this.positionY / this.scale;
+                }
+            }
+            this.initialScale = this.scale;
+            //this.positionX = this.positionX - (this.positionX / this.scale);
             console.log("pinch scaledPositionX: " + this.positionX);
-            this.positionY = this.positionY * this.scale;
+            //this.positionY = this.positionY * this.scale;
             console.log("pinch scaledPositionY: " + this.positionY);
 
+            //this.transformSVG(0); // Faz o transform somente quando for pinch
         } else {
 
             if (evt.touches.length === 1) {
@@ -122,25 +192,28 @@ export class PinchZoomSvgDirective {
     }
 
     @HostListener('touchend', ['$event']) onTouchEnd(evt) {
+        console.log("touchend event.targe: " + evt.target);
+        
         if (this.mode === 'pinch') {
 
-            if (this.scale < 1) {
-                this.scale = 1;
-                this.positionX = 0;
-                this.positionY = 0;
+            if (this.scale < this.MIN_SCALE) {
+                this.scale = this.MIN_SCALE;
+                this.relativeScale = this.scale / this.initialScale;
+                //this.positionX = 0;
+                //this.positionY = 0;
 
             } else if (this.scale > this.MAX_SCALE) {
                 this.scale = this.MAX_SCALE;
                 this.relativeScale = this.scale / this.initialScale;
-                this.positionX = this.originX * (1 - this.relativeScale) + this.initialPositionX + this.moveX;
-                this.positionY = this.originY * (1 - this.relativeScale) + this.initialPositionY + this.moveY;
+                //this.positionX = this.originX * (1 - this.relativeScale) + this.initialPositionX + this.moveX;
+                //this.positionY = this.originY * (1 - this.relativeScale) + this.initialPositionY + this.moveY;
             }
         }
 
-        if (this.scale > 1) {
-            this.positionX = -((evt.touches[0].pageX + evt.touches[1].pageX) / 2);
-            this.positionY = -((evt.touches[0].pageY + evt.touches[1].pageY) / 2);
-        }
+        // if (this.scale > 1 && evt.touches.length > 1) {
+        //     this.positionX = -((evt.touches[0].pageX + evt.touches[1].pageX) / 2);
+        //     this.positionY = -((evt.touches[0].pageY + evt.touches[1].pageY) / 2);
+        // }
 
         this.transformSVG(0.1);
     }
@@ -155,11 +228,22 @@ export class PinchZoomSvgDirective {
         let matrixArray = [scale, 0, 0, scale, w / 2 - scale * x, h / 2 - scale * y];
         return 'matrix(' + matrixArray.join(',') + ')';
     }
+
+    getElementOffset(el) {
+        const rect = el.getBoundingClientRect();
+        return {
+          top: rect.top + window.pageYOffset, // window.pageYOffset e window.pageXOffset precisam ser usados para iOS quando o elemento tem position: fixed.
+          left: rect.left + window.pageXOffset,
+        };
+    }
    
    
     getDistance(evt) {
-        let d = Math.sqrt(Math.pow(evt.touches[0].pageX - evt.touches[1].pageX, 2) +
-        Math.pow(evt.touches[0].pageY - evt.touches[1].pageY, 2));
+        let d = 0;
+        if (evt.touches.length === 2) {
+            d = Math.sqrt(Math.pow(evt.touches[0].pageX - evt.touches[1].pageX, 2) +
+            Math.pow(evt.touches[0].pageY - evt.touches[1].pageY, 2));
+        }
         return Math.round(d);
         //return parseInt(d, 10);
     }
@@ -169,6 +253,24 @@ export class PinchZoomSvgDirective {
         console.log("transform positionX: " + this.positionX);
         console.log("transform positionY: " + this.positionY);
         console.log("transform scale: " + this.scale);
+
+        // Para evitar que o valor seja muito pequeno e acabe sendo convertido para a notacao cientifica, o que da erro ao montar a matrix...
+        if (this.positionX > -0.1 && this.positionX < 0.1) {
+            this.positionX = 0;
+        }
+        if (this.positionY > -0.1 && this.positionY < 0.1) {
+            this.positionY = 0;
+        }
+        this.minX = -1/2 * this.scaledWidth;
+        this.maxX = this.smwidth - this.scaledWidth/2;
+        this.minY = -2/3 * this.scaledHeight;
+        this.maxY = this.smheight - this.scaledHeight/3;
+
+        this.positionX = this.positionX < this.minX ? this.minX : this.positionX > this.maxX ? this.maxX : this.positionX;
+        this.positionY = this.positionY < this.minY ? this.minY : this.positionY > this.maxY ? this.maxY : this.positionY;
+
+        // this.positionX = this.positionX < 0.01 ? 0 : this.positionX > this.smwidth - this.scaledWidth ? this.smwidth - this.scaledWidth : this.positionX;
+        // this.positionY = this.positionY < 0.01 ? 0 : this.positionY > this.smheight - this.scaledHeight ? this.smheight - this.scaledHeight : this.positionY;
         let matrixArray = [this.scale, 0, 0, this.scale, this.positionX, this.positionY];
         let matrix = 'matrix(' + matrixArray.join(',') + ')';
         console.log(matrix);
@@ -176,7 +278,8 @@ export class PinchZoomSvgDirective {
         //$('#viewport').attr('transform', matrix);
         let childSvg = this.svgElement.children[0];
         let childG = childSvg.children[0];
-        //childG.setAttribute('transform', matrix);
+        childG.setAttribute('transform', matrix);
+        //TweenLite.to(testDiv, 2, {"transform": "matrix(1, 0, 0, 1, 200, 200)"});
 
         //document.getElementById('viewport').setAttribute('transform', matrix);
     }

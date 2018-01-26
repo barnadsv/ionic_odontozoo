@@ -35,16 +35,18 @@ export class FrenteComponent {
     }
 
     ngOnInit() {
-        this.centralizaImagem();      
+        this.iniciaImagem();
+        this.centralizaImagem(0.1);      
     }
 
-    centralizaImagem() {
+    iniciaImagem() {
         let containerElement = document.getElementsByClassName("svg-content")[0];
         let bcrC = containerElement.getBoundingClientRect();
         this.containerWidth = bcrC.width;
         this.containerHeight = bcrC.height - 60; // 56 eh a altura da barra inferior com os tabs -- Acho que eh por isso, pois os valores coincidem!
         let bbC = (containerElement as SVGGraphicsElement).getBBox();
         this.left = bbC.x;
+        this.y = bbC.y;
         
         this.frenteElement = this.frente.nativeElement;
         let bbF = (this.frenteElement as SVGGraphicsElement).getBBox();
@@ -58,37 +60,16 @@ export class FrenteComponent {
 
         this.x = this.containerWidth/2 - this.scaledWidth/2 - this.left; 
 
-        TweenLite.to(this.frenteElement, 0.1, { scale: this.scale, x: this.x });
-
-        console.log("container");
-        console.log((containerElement as SVGGraphicsElement).getBBox());
-        console.log(bcrC);
-        console.log(this.containerWidth);
-        console.log(this.containerHeight);
-        // console.log(lC);
-        // console.log(tC);
-        console.log(this.left);
-        // console.log(yC);
-        console.log("frente");
-        console.log((this.frenteElement as SVGGraphicsElement).getBBox());
-        console.log(this.frenteElement.getBoundingClientRect());
-        console.log(this.frenteWidth);
-        console.log(this.frenteHeight);
-        // console.log(lF);
-        // console.log(tF);
-        // console.log(xF);
-        // console.log(yF);
-        // console.log("_frente");
-        // console.log(_bbF);
-        // console.log(this.frenteElement.getBoundingClientRect());
-        
-        console.log("frente scaled");
-        console.log(this.scale);
-        console.log(this.scaledWidth);
-        console.log(this.scaledHeight);
-
-        // this.centerX = lF.toString();
-        // this.centerY = tF.toString();
+        this.denteService.capturouMedidas.emit({
+            x: this.x, 
+            y: this.y, 
+            left: this.left,
+            scale: this.scale,
+            scaledHeight: this.scaledHeight, 
+            scaledWidth: this.scaledWidth, 
+            containerHeight: this.containerHeight, 
+            containerWidth: this.containerWidth
+        });
 
         this.onMedidas.emit(
             {
@@ -102,10 +83,36 @@ export class FrenteComponent {
             }
         );
 
+        console.log("container");
+        console.log((containerElement as SVGGraphicsElement).getBBox());
+        console.log(bcrC);
+        console.log(this.containerWidth);
+        console.log(this.containerHeight);
+        console.log(this.left);
+        console.log("frente");
+        console.log((this.frenteElement as SVGGraphicsElement).getBBox());
+        console.log(this.frenteElement.getBoundingClientRect());
+        console.log(this.frenteWidth);
+        console.log(this.frenteHeight);
+        console.log("frente scaled");
+        console.log(this.scale);
+        console.log(this.scaledWidth);
+        console.log(this.scaledHeight);
+
+    }
+
+    centralizaImagem(duracao) {
+        
+        TweenLite.to(this.frenteElement, duracao, { scale: this.scale, x: this.x });
+
+        
+
         
     }
 
     alteraLocalizacao(acao) {
+
+        
 
         if (acao.estado === 'nao-selecionado') {
             TweenLite.to(this.frenteElement, 1, {x: this.x});
@@ -116,6 +123,7 @@ export class FrenteComponent {
             let novaPosicao = acao.posicao === 'direita' ? 
                  -1 * (this.scaledWidth/2 + this.left) + 5 :
                   this.containerWidth - this.scaledWidth/2 - this.left - 5;
+            TweenLite.to(this.frenteElement, 1, { scale: this.scale, x: this.x });
             TweenLite.to(this.frenteElement, 1, {x: novaPosicao});
         }
     }
