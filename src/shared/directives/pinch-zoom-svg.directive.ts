@@ -25,7 +25,7 @@ export class PinchZoomSvgDirective {
     scale = 1;
     relativeScale = 1;
     initialScale = 1;
-    MIN_SCALE = 1;
+    MIN_SCALE = 0.5;
     MAX_SCALE = 3;
     mode = '';
     distance = 0;
@@ -142,7 +142,8 @@ export class PinchZoomSvgDirective {
                 this.distance = this.getDistance(evt);
             }
             console.log("pinch distance: " + this.distance);
-            this.relativeScale = this.zoomVelocity * this.distance / this.initialDistance;
+            this.relativeScale = (((this.initialDistance - this.distance) * (1 - this.zoomVelocity)) + this.distance) / this.initialDistance;
+            //this.relativeScale = this.zoomVelocity * this.distance / this.initialDistance;
             console.log("pinch relativeScale: " + this.relativeScale);
             console.log("pinch initialScale: " + this.initialScale);
             this.scale = this.relativeScale * this.initialScale;
