@@ -141,42 +141,49 @@ export class PinchZoomSvgDirective {
             } else {
                 this.distance = this.getDistance(evt);
             }
-            console.log("pinch distance: " + this.distance);
-            this.relativeScale = (((this.initialDistance - this.distance) * (1 - this.zoomVelocity)) + this.distance) / this.initialDistance;
-            //this.relativeScale = this.zoomVelocity * this.distance / this.initialDistance;
-            console.log("pinch relativeScale: " + this.relativeScale);
-            console.log("pinch initialScale: " + this.initialScale);
-            this.scale = this.relativeScale * this.initialScale;
-            this.scale = this.scale < this.MIN_SCALE ? this.MIN_SCALE : this.scale > this.MAX_SCALE ? this.MAX_SCALE : this.scale;
-            console.log("pinch scale: " + this.scale);
-            this.scaledWidth = this.originalWidth * this.scale;
-            this.scaledHeight = this.originalHeight * this.scale;
-            // if (evt.touches.length === 2) {
-                
-            //     this.scale = 
-            //     this.positionX = ((evt.touches[0].pageX + evt.touches[1].pageX) / 2);
-            //     this.positionX = this.positionX
-            //     console.log("pinch positionX: " + this.positionX);
-            //     this.positionY = ((evt.touches[0].pageY + evt.touches[1].pageY) / 2);
-            //     console.log("pinch positionY: " + this.positionY);
-            // }
-            // Take scale into account, so there is no left-up offset when zoomed in:
-            if (this.scale >= this.MIN_SCALE && this.scale <= this.MAX_SCALE) {
-                if (this.scale > this.initialScale) {
-                    this.positionX = this.positionX - (this.positionX / this.scale); //this.positionX * (1 - 1/this.scale)
-                    this.positionY = this.positionY - (this.positionY / this.scale);
-                } else {
-                    this.positionX = this.positionX / this.scale;
-                    this.positionY = this.positionY / this.scale;
-                }
-            }
-            this.initialScale = this.scale;
-            //this.positionX = this.positionX - (this.positionX / this.scale);
-            console.log("pinch scaledPositionX: " + this.positionX);
-            //this.positionY = this.positionY * this.scale;
-            console.log("pinch scaledPositionY: " + this.positionY);
 
-            //this.transformSVG(0); // Faz o transform somente quando for pinch
+            if (this.distance > 0) {
+                console.log("pinch initialDistance: " + this.initialDistance);
+                console.log("pinch distance: " + this.distance);
+                // this.relativeScale = (((this.initialDistance - this.distance) * (1 - this.zoomVelocity)) + this.distance) / this.initialDistance;
+                this.relativeScale = this.distance / this.initialDistance;
+                //this.relativeScale = this.zoomVelocity * this.distance / this.initialDistance;
+                console.log("pinch relativeScale: " + this.relativeScale);
+                console.log("pinch initialScale: " + this.initialScale);
+                this.scale = this.relativeScale * this.initialScale;
+                this.scale = this.scale < this.MIN_SCALE ? this.MIN_SCALE : this.scale > this.MAX_SCALE ? this.MAX_SCALE : this.scale;
+                console.log("pinch scale: " + this.scale);
+                this.scaledWidth = this.originalWidth * this.scale;
+                this.scaledHeight = this.originalHeight * this.scale;
+                // if (evt.touches.length === 2) {
+                    
+                //     this.scale = 
+                //     this.positionX = ((evt.touches[0].pageX + evt.touches[1].pageX) / 2);
+                //     this.positionX = this.positionX
+                //     console.log("pinch positionX: " + this.positionX);
+                //     this.positionY = ((evt.touches[0].pageY + evt.touches[1].pageY) / 2);
+                //     console.log("pinch positionY: " + this.positionY);
+                // }
+
+                // // Take scale into account, so there is no left-up offset when zoomed in:
+                // if (this.scale >= this.MIN_SCALE && this.scale <= this.MAX_SCALE) {
+                //     if (this.scale > this.initialScale * 1.01) {
+                //         this.positionX = this.positionX - (this.positionX / this.scale); //this.positionX * (1 - 1/this.scale)
+                //         this.positionY = this.positionY - (this.positionY / this.scale);
+                //     } else if (this.scale < this.initialScale / 1.01) {
+                //         this.positionX = this.positionX / this.scale;
+                //         this.positionY = this.positionY / this.scale;
+                //     }
+                // }
+
+                //this.initialScale = this.scale;
+                //this.positionX = this.positionX - (this.positionX / this.scale);
+                console.log("pinch scaledPositionX: " + this.positionX);
+                //this.positionY = this.positionY * this.scale;
+                console.log("pinch scaledPositionY: " + this.positionY);
+
+                //this.transformSVG(0); // Faz o transform somente quando for pinch
+            }
         } else {
 
             if (evt.touches.length === 1) {
